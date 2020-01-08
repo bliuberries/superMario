@@ -1,0 +1,24 @@
+{
+  "name": "supermario",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "serve": "^11.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "serve ./public",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bliuberries/superMario.git"
+  },
+  "author": "Bliuberries",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bliuberries/superMario/issues"
+  },
+  "homepage": "https://github.com/bliuberries/superMario#readme"
+}
