@@ -8,7 +8,6 @@ export default class Timer {
 
       while(accumulatedTime > deltaTime) {
         this.update(deltaTime);
-
         accumulatedTime -= deltaTime;
       }
       
