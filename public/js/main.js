@@ -1,6 +1,7 @@
 import Timer from './timer.js';
 import { loadLevel } from './loaders.js';
 import { createMario } from './entities.js';
+import { createCollisionLayer } from './layers.js';
 
 import Keyboard from './keyboardState.js';
 
@@ -16,6 +17,8 @@ Promise.all([
 
     const gravity = 2000;
     mario.pos.set(64, 64);
+
+    createCollisionLayer(level);
 
     level.entities.add(mario);
 
