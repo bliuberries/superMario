@@ -12,6 +12,21 @@ export function loadImage(url) {
   })
 }
 
+function createTiles(level, backgrounds) {
+  backgrounds.forEach(background => {
+    background.ranges.forEach(([x1, x2, y1, y2]) => {
+      for (let x = x1; x < x2; ++x) {
+        for (let y = y1; y < y2; ++y) {
+          // sprites.drawTile(background.tile, context, x, y);
+          level.tiles.set(x, y, {
+            name: background.tile,
+          });
+        }
+      }
+    });
+  });
+} 
+
 export function loadLevel(name) {
   return Promise.all([
     fetch(`/levels/${name}.json`)
@@ -22,9 +37,9 @@ export function loadLevel(name) {
     .then(([levelSpec, backgroundSprites]) => {
       const level = new Level();
 
-      // createTiles(level, levelSpec.backgrounds);
+      createTiles(level, levelSpec.backgrounds);
 
-      const backgroundLayer = createBackgroundLayer(levelSpec.backgrounds, backgroundSprites);
+      const backgroundLayer = createBackgroundLayer(level, backgroundSprites);
       level.comp.layers.push(backgroundLayer);
 
       const spriteLayer = createSpriteLayer(level.entities);
