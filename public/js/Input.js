@@ -11,7 +11,9 @@ export function setupKeyboard(entity) {
       entity.jump.cancel();
     }
   });
-
+  input.addMapping('KeyO', keyState => {
+    entity.go.dragFactor = keyState ? 1/5000 : 1/1000;
+  })
   input.addMapping('KeyD', keyState => {
     entity.go.dir += keyState ? 1 : -1;
   });
