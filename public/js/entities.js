@@ -17,6 +17,9 @@ export function createMario() {
 
       function routeFrame(mario) {
         if (mario.go.distance > 0) {
+          if(mario.vel.x > 0 && mario.go.dir < 0 || mario.vel.x < 0 && mario.go.dir > 0) {
+            return 'brake';
+          }
           return runAnim(mario.go.distance);
         }
 
