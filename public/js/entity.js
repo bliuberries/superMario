@@ -1,12 +1,17 @@
 import { Vec2 } from './math.js';
 
+export const Sides = {
+  TOP: Symbol('top'),
+  BOTTOM: Symbol('bottom')
+}
+
 export class Trait {
   constructor(name) {
     this.NAME = name;
   }
 
   obstruct() {
-    
+
   }
   update() {
     console.warn('Unhandled update call in Trait');
