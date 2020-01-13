@@ -86,8 +86,6 @@ export function loadSpriteSheet(name) {
         });
     }
 
-    console.log(sprites);
-
       return sprites;
     });
 }
