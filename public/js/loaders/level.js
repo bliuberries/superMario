@@ -1,3 +1,4 @@
+import { Matrix } from './math.js';
 import Level from '../level.js';
 import { createBackgroundLayer, createSpriteLayer } from '../layers.js';
 import { loadJSON, loadSpriteSheet } from '../loaders.js';
@@ -11,7 +12,15 @@ export function loadLevel(name) {
     .then(([levelSpec, backgroundSprites]) => {
       const level = new Level();
 
-      createTiles(level, levelSpec.tiles, levelSpec.patterns);
+      const collisionGrid = createCollisionGrid(levelSpec.tiles, levelSpec.patterns);
+      level.setCollisionGrid(collisionGrid);
+      
+      for(const { tile, x, y } of expandTiles(levelSpec.tiles, levelSpec.patterns)) {
+        level.tiles.set(x, y, {
+          name:tile.name,
+          type: tile.type
+        });
+      }
 
       const backgroundLayer = createBackgroundLayer(level, backgroundSprites);
       level.comp.layers.push(backgroundLayer);
@@ -21,6 +30,18 @@ export function loadLevel(name) {
 
       return level;
     })
+}
+
+function createCollisionGrid(tiles, patterns)  {
+  const grid = new Matrix();
+
+  for(const { tile, x, y } of expandTiles(tiles, patterns)) {
+    grid.set(x, y, {
+      type: tile.type
+    });
+  }
+
+  return grid;
 }
 
 function* expandSpan(xStart, xLen, yStart, yLen) {
@@ -33,41 +54,53 @@ function* expandSpan(xStart, xLen, yStart, yLen) {
   }
 }
 
-function createTiles(level, tiles, patterns, offsetX = 0, offsetY = 0) {
+function expandRange(range) {
+  if (range.length === 4) {
+    const [xStart, xLen, yStart, yLen] = range;
+    return expandSpan(xStart, xLen, yStart, yLen);
 
-  function applyRange(tile, xStart, xLen, yStart, yLen) {
-    for (const { x, y } of expandSpan(xStart, xLen, yStart, yLen)) {
-      const derivedX = x + offsetX;
-      const derivedY = y + offsetY;
+  } else if (range.length === 3) {
+    const [xStart, xLen, yStart] = range;
+    return expandSpan(xStart, xLen, yStart, 1);
 
-      if (tile.pattern) {
-        console.log('Pattern detected', patterns[tile.pattern]);
-        const backgrounds = patterns[tile.pattern].tiles;
-        createTiles(level, backgrounds, patterns, derivedX, derivedY);
-      } else {
-        level.tiles.set(derivedX, derivedY, {
-          name: tile.name,
-          type: tile.type
-        });
+  } else if (range.length === 2) {
+    const [xStart, yStart] = range;
+    return expandSpan(xStart, 1, yStart, 1);
+  }
+}
+
+function* expandRanges(ranges) {
+  for (const range of ranges) {
+    for (const item of expandRange(range)) {
+      yield item;
+    }
+  }
+}
+
+function expandTiles(tiles, patterns) {
+  const expandedTiles = [];
+
+  function walkTiles(tiles, offsetX, offsetY) {
+    for (const tile of tiles) {
+      for (const { x, y } of expandRanges(tile.ranges)) {
+        const derivedX = x + offsetX;
+        const derivedY = y + offsetY;
+
+        if (tile.pattern) {
+          const tiles = patterns[tile.pattern].tiles;
+          walkTiles(tiles, derivedX, derivedY);
+        } else {
+          expandedTiles.push({
+            tile,
+            x: derivedX,
+            y: derivedY
+          })
+        }
       }
     }
   }
 
-  // console.log(backgrounds)
-  tiles.forEach(tile => {
-    tile.ranges.forEach((range) => {
-      if (range.length === 4) {
-        const [xStart, xLen, yStart, yLen] = range;
-        applyRange(tile, xStart, xLen, yStart, yLen);
+  walkTiles(tiles, 0, 0);
 
-      } else if (range.length === 3) {
-        const [xStart, xLen, yStart] = range;
-        applyRange(tile, xStart, xLen, yStart, 1);
-
-      } else if (range.length === 2) {
-        const [xStart, yStart] = range;
-        applyRange(tile, xStart, 1, yStart, 1);
-      }
-    });
-  });
+  return expandedTiles;
 }
