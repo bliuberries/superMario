@@ -6,7 +6,7 @@ export function loadLevel(name) {
   return loadJSON(`/levels/${name}.json`)
     .then(levelSpec => Promise.all([
       levelSpec,
-      loadSpriteSheet(levelSpec.spriteSheet)  
+      loadSpriteSheet(levelSpec.spriteSheet)
     ]))
     .then(([levelSpec, backgroundSprites]) => {
       const level = new Level();
@@ -21,31 +21,38 @@ export function loadLevel(name) {
 
       return level;
     })
-} 
+}
+
+function* expandSpan(xStart, xLen, yStart, yLen) {
+  const xEnd = xStart + xLen
+  const yEnd = yStart + yLen
+  for (let x = xStart; x < xEnd; ++x) {
+    for (let y = yStart; y < yEnd; ++y) {
+      yield { x, y };
+    }
+  }
+}
 
 function createTiles(level, tiles, patterns, offsetX = 0, offsetY = 0) {
 
   function applyRange(tile, xStart, xLen, yStart, yLen) {
-    const xEnd = xStart + xLen
-    const yEnd = yStart + yLen
-    for (let x = xStart; x < xEnd; ++x) {
-      for (let y = yStart; y < yEnd; ++y) {
-        const derivedX = x + offsetX;
-        const derivedY = y + offsetY;
+    for (const { x, y } of expandSpan(xStart, xLen, yStart, yLen)) {
+      const derivedX = x + offsetX;
+      const derivedY = y + offsetY;
 
-        if(tile.pattern) {
-          console.log('Pattern detected', patterns[tile.pattern]);
-          const backgrounds = patterns[tile.pattern].tiles;
-          createTiles(level, backgrounds, patterns, derivedX, derivedY);
-        } else {
-          level.tiles.set(derivedX, derivedY, {
-            name: tile.name,
-            type: tile.type
-          });
-        }
+      if (tile.pattern) {
+        console.log('Pattern detected', patterns[tile.pattern]);
+        const backgrounds = patterns[tile.pattern].tiles;
+        createTiles(level, backgrounds, patterns, derivedX, derivedY);
+      } else {
+        level.tiles.set(derivedX, derivedY, {
+          name: tile.name,
+          type: tile.type
+        });
       }
     }
   }
+
   // console.log(backgrounds)
   tiles.forEach(tile => {
     tile.ranges.forEach((range) => {
