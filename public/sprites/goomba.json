@@ -17,12 +17,11 @@
   ],
   "animations": [
     {
-      "name": "run",
-      "frameLen": 6,
+      "name": "walk",
+      "frameLen": 0.15,
       "frames": [
-        "run-1",
-        "run-2",
-        "run-3"
+        "walk-1",
+        "walk-2"
       ]
     }
   ]
