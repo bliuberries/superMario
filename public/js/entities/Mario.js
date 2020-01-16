@@ -11,7 +11,6 @@ export function loadMario() {
     .then(createMarioFactory);
 }
 
-
 function createMarioFactory(sprite) {
   const runAnim = sprite.animations.get('run');
 
@@ -19,10 +18,12 @@ function createMarioFactory(sprite) {
     if (mario.jump.falling) {
       return 'jump';
     }
+
     if (mario.go.distance > 0) {
       if (mario.vel.x > 0 && mario.go.dir < 0 || mario.vel.x < 0 && mario.go.dir > 0) {
         return 'brake';
       }
+      
       return runAnim(mario.go.distance);
     }
   
@@ -38,7 +39,6 @@ function createMarioFactory(sprite) {
   }
 
   return function createMario() {
-
     const mario = new Entity();
     mario.size.set(14, 16);
 
