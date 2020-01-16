@@ -1,7 +1,6 @@
 import TileResolver from './TileResolver.js';
 
 export function createBackgroundLayer(level, tiles, sprites) {
-  // const tiles = level.tiles;
   const resolver = new TileResolver(tiles);
 
   const buffer = document.createElement('canvas');
@@ -12,12 +11,12 @@ export function createBackgroundLayer(level, tiles, sprites) {
 
   function redraw(startIndex, endIndex) {
     context.clearRect(0, 0, buffer.width, buffer.height);
-    
+
     for (let x = startIndex; x <= endIndex; ++x) {
       const col = tiles.grid[x];
       if (col) {
         col.forEach((tile, y) => {
-          if (sprites.animations.has(tile.name) ) {
+          if (sprites.animations.has(tile.name)) {
             sprites.drawAnim(tile.name, context, x - startIndex, y, level.totalTime);
           } else {
             sprites.drawTile(tile.name, context, x - startIndex, y);
@@ -54,8 +53,7 @@ export function createSpriteLayer(entities, width = 64, height = 64) {
       context.drawImage(
         spriteBuffer,
         entity.pos.x - camera.pos.x,
-        entity.pos.y - camera.pos.y
-      )
+        entity.pos.y - camera.pos.y);
     })
   };
 }
@@ -87,8 +85,8 @@ export function createCollisionLayer(level) {
     level.entities.forEach(entity => {
       context.beginPath();
       context.rect(
-        entity.pos.x - camera.pos.x,
-        entity.pos.y - camera.pos.y,
+        entity.bounds.left - camera.pos.x,
+        entity.bounds.top - camera.pos.y,
         entity.size.x,
         entity.size.y);
       context.stroke();
