@@ -8,31 +8,65 @@ export function loadKoopa() {
   .then(createKoopaFactory);
 }
 
+const STATE_WALKING = Symbol('walking');
+const STATE_HIDING = Symbol('hiding');
+
 class Behavior extends Trait {
   constructor() {
     super('behavior');
+    this.state = STATE_WALKING;
+    this.hideTime = 0;
+    this.hideDuration = 5;
   }
 
   collides(us, them) {
     if(us.killable.dead) return;
+
     if(them.stomper) {
       if(them.vel.y > us.vel.y) {
-        us.killable.kill();
-        them.stomper.bounce();
-        us.PendulumWalk.speed = 0;
+        this.handleStomp(us, them);
       } else {
         them.killable.kill();
+      }
+    }
+  }
+
+  handleStomp(us, them) {
+    if(this.state === STATE_WALKING) {
+      this.hide(us);
+    } else if (this.state === STATE_HIDING) {
+      us.killable.kill();
+      us.vel.set(100, -200);
+    }
+  }
+
+  hide(us) {
+    us.vel.x = 0;
+    us.PendulumWalk.enabled = false;
+    this.hideTime = 0;
+    this.state = STATE_HIDING;
+  }
+
+  unhide(us) {
+    us.PendulumWalk.enabled = true;
+    this.state = STATE_WALKING;
+  }
+
+  update(us, deltaTime) {
+    if(this.state === STATE_HIDING) {
+      this.hideTime += deltaTime;
+      if(this.hideTime > this.hideDuration) {
+        this.unhide(us)
       }
     }
   }
 }
 
 function createKoopaFactory(sprite) {
-
   const walkAnim = sprite.animations.get('walk');
 
   function routeAnim(koopa) {
-    if(koopa.killable.dead) return 'flat';
+    if(koopa.behavior.state === STATE_HIDING) return 'hiding';
     return walkAnim(koopa.lifetime);
   }
 
