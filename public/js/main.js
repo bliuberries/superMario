@@ -25,6 +25,7 @@ async function main(canvas) {
     loadEntities(),
     loadFont()
   ])
+  
   const loadLevel = await createLevelLoader(entityFactory);
 
   const level = await loadLevel('1-1');
@@ -37,7 +38,7 @@ async function main(canvas) {
   level.entities.add(playerEnv);
 
   level.comp.layers.push(createCollisionLayer(level));
-  level.comp.layers.push(createDashboardLayer(font));
+  level.comp.layers.push(createDashboardLayer(font, playerEnv));
 
   const input = setupKeyboard(mario);
   input.listenTo(window);
