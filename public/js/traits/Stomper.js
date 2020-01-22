@@ -4,7 +4,6 @@ export default class Stomper extends Trait {
   constructor() {
     super('stomper');
     this.bounceSpeed = 400;
-    this.queueBounce = false;
   }
 
   bounce(us, them) {
