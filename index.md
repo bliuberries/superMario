@@ -14,9 +14,9 @@
     margin: auto;
   }
   </style>
-  <script type="module" src="/public/js/main.js"></script>
 </head>
 <body>
+  <script type="module" src="/public/js/main.js"></script>
   <canvas id="screen" width="256" height="240">
 </body>
 </html>
