@@ -16,7 +16,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "build": "webpack -p && node server.js",
+    "start": "webpack -p && node server.js",
+    "build": "webpack",
     "serve": "serve /src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
