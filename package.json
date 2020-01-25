@@ -1,9 +1,8 @@
 {
-  "type": "module",
   "name": "supermario",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/js/main.js",
   "dependencies": {
     "css-loader": "^3.4.2",
     "express": "^4.17.1",
@@ -19,7 +18,7 @@
   "scripts": {
     "start": "webpack -p && node server.js",
     "build": "webpack",
-    "serve": "serve /src",
+    "serve": "serve ./src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -31,5 +30,6 @@
   "bugs": {
     "url": "https://github.com/bliuberries/superMario/issues"
   },
-  "homepage": "https://github.com/bliuberries/superMario#readme"
+  "homepage": "https://github.com/bliuberries/superMario#readme",
+  "type": "module"
 }
